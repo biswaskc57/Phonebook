@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React getting started</title>
+  </head>
+  <body>
+    <!-- Root container for react components -->
+    <div id="root"></div>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/react@17/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+
+    <script type="text/babel">
+      const RestNasa = () => {
+        const [city, setCity] = React.useState("");
+        const [temparature, setTemparature] = React.useState("");
+        const [weather, setWeather] = React.useState("");
+        const [url, setUrl] = React.useState("");
+        const [response, setResponse] = React.useState("");
+        const [weatherType, setWeatherType] = React.useState("");
+        const inputChanged = (event) => {
+          setCity(event.target.value);
+        };
+        const formSubmitted = (event) => {
+          event.preventDefault();
+          fetch(
+            "https://api.openweathermap.org/data/2.5/weather?q=" +
+              city +
+              "%20&APPID=d763e9e5a37ce1d7bde6af9100b11e66"
+          )
+            .then((response) => response.json())
+            .then((responseData) => {
+              console.log(responseData);
+              setResponse(responseData);
+              setTemparature(
+                `Temperature: ${
+                  (responseData.main.temp - 273.15).toFixed(2) + " °C"
+                }`
+              );
+              setWeather(`Weather : ${responseData.name}`);
+              setWeatherType(`Weather: ${responseData.weather[0].main}`);
+              setUrl(responseData.weather[0].icon);
+            });
+        };
+
+        return (
+          <div>
+            <input type="text" value={city} onChange={inputChanged} />
+            <button type="button" onClick={formSubmitted}>
+              Get weather
+            </button>
+            {response.name !== undefined ? (
+              <div>
+                <div className="date">
+                  <h1>{weather}</h1>
+                  <p>{temparature}</p>
+                  <p>{weatherType}</p>
+                  <img src={`http://openweathermap.org/img/wn/${url}.png`} />
+                </div>
+              </div>
+            ) : null}
+          </div>
+        );
+      };
+      ReactDOM.render(<RestNasa />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
