@@ -6,12 +6,12 @@ Content-Type:application/json
 
 {
     
-    "name": "pepepe",
-    "number": ""
+    "name": "gele",
+    "number": "12345"
 }
 
 ###
 GET http://localhost:3001/api/persons/5 
 
 ###
-DELETE http://localhost:3001/api/persons/1
+DELETE http://localhost:3001/api/persons/5

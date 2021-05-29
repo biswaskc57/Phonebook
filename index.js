@@ -1,7 +1,14 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
-
 app.use(express.json());
+
+morgan.token("body", (req, res) => JSON.stringify(req.body));
+
+//:body comes from morgan.token("body",...)
+app.use(
+  morgan(":method :url :status :response-time ms - :res[content-length] :body ")
+);
 
 let persons = [
   { id: 1, name: "Arto Hellas", number: "040-123456" },
@@ -11,7 +18,7 @@ let persons = [
 ];
 
 app.get("/", (request, response) => {
-  response.send(info);
+  response.send("<div>HELLO WORLD</div>");
 });
 
 const today = new Date();
@@ -45,17 +52,15 @@ const number = generateId();
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
-  console.log(body);
   console.log(generateId());
   const checkName = persons.map((person) => person.name);
   if (!body.name || !body.number) {
-    console.log(body.name);
     return response.status(400).json({
       error: "content missing",
     });
   } else if (checkName.includes(body.name)) {
     return response.status(200).json({
-      error: body.name + " is a lready included",
+      error: " name must be unique",
     });
   }
 
@@ -91,9 +96,14 @@ app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((person) => person.id !== id);
 
-  console.log(persons);
   response.status(204).end();
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT, () => {
