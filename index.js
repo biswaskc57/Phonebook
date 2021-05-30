@@ -6,12 +6,13 @@ app.use(express.json());
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 
 const cors = require("cors");
-
 app.use(cors());
 //:body comes from morgan.token("body",...)
 app.use(
   morgan(":method :url :status :response-time ms - :res[content-length] :body ")
 );
+
+app.use(express.static("build"));
 
 let persons = [
   { id: 1, name: "Arto Hellas", number: "040-123456" },
