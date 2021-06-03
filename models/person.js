@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
+var uniqueValidator = require("mongoose-unique-validator");
 
 const url = process.env.MONGODB_URI;
 console.log("connecting to", url);
@@ -20,8 +21,15 @@ mongoose
   });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: Number,
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+  },
+  number: {
+    type: Number,
+    required: true,
+  },
 });
 
 /*
@@ -29,6 +37,9 @@ person.save().then((result) => {
   console.log("added " + person.name + " number " + person.number);
   mongoose.connection.close();
 });*/
+
+// Apply the uniqueValidator plugin to userSchema.
+personSchema.plugin(uniqueValidator);
 
 personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
