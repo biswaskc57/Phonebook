@@ -39,13 +39,16 @@ app.get("/", (request, response) => {
 const today = new Date();
 
 app.get("/info", (request, response) => {
-  response.send(
-    "Phonebook has a info for total " +
-      persons.length +
-      " persons." +
-      "<br>" +
-      today
-  );
+  Person.countDocuments({}, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      response.send(`<div>
+                <p>Phonebook has info of ${result} people</p>
+                <p>${today}</p>
+                </div>`);
+    }
+  });
 });
 
 app.get("/api/persons", (request, response) => {
@@ -94,7 +97,7 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
 
   const person = {
@@ -109,9 +112,8 @@ app.put("/api/persons/:id", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
-  const id = Number(request.params.id);
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));

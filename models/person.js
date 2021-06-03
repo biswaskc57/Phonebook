@@ -13,7 +13,7 @@ mongoose
     useFindAndModify: false,
     useCreateIndex: true,
   })
-  .then((result) => {
+  .then(() => {
     console.log("connected to MongoDB");
   })
   .catch((error) => {
@@ -25,9 +25,11 @@ const personSchema = new mongoose.Schema({
     type: String,
     minLength: 3,
     required: true,
+    unique: true,
   },
   number: {
-    type: Number,
+    type: String,
+    minLength: 8,
     required: true,
   },
 });
